@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">storyapp</string>
+    <string name="signup">Register</string>
+    <string name="login">Sign In</string>
+    <string name="logout">Sign Out</string>
+
+    <string name="message_welcome_page">Mau belajar Android, iOS, Machine Learning, Cloud, Front-End, Back-End, dan bidang IT lainnya? Di Dicoding aja!</string>
+    <string name="title_welcome_page">Welcome to my Story App!</string>
+
+    <string name="title_signup_page">New here?</string>
+    <string name="message_signup_page">Please fill out this form to continue</string>
+    <string name="message_signup_page_sign_in">Already have an account? Sign In</string>
+
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <string name="title_login_page">Welcome Back!</string>
+    <string name="message_login_page">Lets log back in to your account</string>
+    <string name="message_login_page_sign_up">Don\'t have an account? Sign Up</string>
+
+    <string name="greeting">Halo %1$s,</string>
+    <string name="todo">TODO</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
