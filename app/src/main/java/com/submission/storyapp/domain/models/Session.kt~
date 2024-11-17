@@ -1,0 +1,6 @@
+package com.submission.storyapp.domain.model
+
+data class Session(
+    val token: String? = null,
+    val email: String? = null
+)
