@@ -2,7 +2,6 @@ package com.submission.storyapp.presentation.core.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.submission.storyapp.domain.usecases.auth.AuthUseCases
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import com.submission.storyapp.utils.ResponseWrapper
@@ -20,6 +19,7 @@ class HomeViewModel @Inject constructor(
     private val storyUseCases: StoryUseCases,
     private val sessionUseCases: SessionUseCases
 ) : ViewModel() {
+    // Trying jetpack compose style
     var state = MutableStateFlow(HomeState())
         private set
 

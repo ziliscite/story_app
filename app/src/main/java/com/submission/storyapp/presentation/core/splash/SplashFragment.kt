@@ -21,6 +21,7 @@ class SplashFragment : Fragment() {
     private var _binding: FragmentSplashBinding? = null
     private val binding get() = _binding!!
 
+    // Might need a view model, but it works for now
     @Inject lateinit var sessionUseCases: SessionUseCases
 
     override fun onCreateView(

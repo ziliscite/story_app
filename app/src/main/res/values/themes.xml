@@ -61,5 +61,9 @@
         <item name="colorOnCustomColor3Container">@color/colorOnCustomColor3Container</item>
     </style>
 
-    <style name="Theme.Storyapp" parent="Base.Theme.Storyapp" />
+    <style name="Theme.Storyapp" parent="Base.Theme.Storyapp" >
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+    </style>
 </resources>

@@ -2,6 +2,7 @@ package com.submission.storyapp.presentation.core.home
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,10 +13,10 @@ import com.submission.storyapp.databinding.StoryCardBinding
 import com.submission.storyapp.utils.parseDate
 
 class StoryAdapter(
-    val onClick: (Story) -> Unit
+    val onClick: (Story, StoryCardBinding) -> Unit
 ) : ListAdapter<Story, StoryAdapter.MyViewHolder>(DIFF_CALLBACK) {
     class MyViewHolder(
-        private val binding: StoryCardBinding,
+        val binding: StoryCardBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(story: Story){ binding.apply {
@@ -36,7 +37,7 @@ class StoryAdapter(
         val story = getItem(position)
         holder.bind(story)
         holder.itemView.setOnClickListener{
-            onClick(story)
+            onClick(story, holder.binding)
         }
     }
 

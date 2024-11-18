@@ -38,10 +38,10 @@ class DetailFragment : Fragment() {
     }
 
     private fun animate() { binding.apply {
-        val image = ObjectAnimator.ofFloat(ivStory, View.ALPHA, 1f).setDuration(160)
-        val title = ObjectAnimator.ofFloat(tvTitle, View.ALPHA, 1f).setDuration(160)
-        val date = ObjectAnimator.ofFloat(tvDate, View.ALPHA, 1f).setDuration(160)
-        val description = ObjectAnimator.ofFloat(tvDescription, View.ALPHA, 1f).setDuration(160)
+        val image = ObjectAnimator.ofFloat(ivStory, View.ALPHA, 1f).setDuration(100)
+        val title = ObjectAnimator.ofFloat(tvTitle, View.ALPHA, 1f).setDuration(100)
+        val date = ObjectAnimator.ofFloat(tvDate, View.ALPHA, 1f).setDuration(100)
+        val description = ObjectAnimator.ofFloat(tvDescription, View.ALPHA, 1f).setDuration(100)
 
         AnimatorSet().apply {
             playSequentially(

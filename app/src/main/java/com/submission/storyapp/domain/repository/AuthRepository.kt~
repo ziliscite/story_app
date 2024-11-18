@@ -5,7 +5,6 @@ import com.submission.storyapp.data.remote.responses.SignInResponse
 import com.submission.storyapp.data.remote.responses.SignUpResponse
 import com.submission.storyapp.utils.ResponseWrapper
 
-// Funny mistake to depend on the data layer instead of the domain layer
 interface AuthRepository {
     fun signIn(
         email: String, password: String

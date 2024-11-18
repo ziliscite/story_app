@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.asLiveData
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.databinding.FragmentHomeBinding
@@ -56,8 +57,20 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         rvStory.layoutManager = layoutManager
 
-        adapter = StoryAdapter {
-            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(it)
+        adapter = StoryAdapter { story, _ ->
+            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(story)
+
+            // Shared element transition -- failed, but tried anyway
+//            val extras = FragmentNavigator.Extras.Builder()
+//                .addSharedElements(
+//                    mapOf(
+//                        views.ivStory to views.ivStory.transitionName,
+//                        views.tvTitle to views.tvTitle.transitionName,
+//                        views.tvDate to views.tvDate.transitionName,
+//                        views.tvDescription to views.tvDescription.transitionName
+//                    )
+//                ).build()
+
             findNavController().navigate(action)
         }
 
