@@ -6,14 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: StoryAdapter
 
     private val viewModel: HomeViewModel by viewModels()
 
@@ -28,21 +33,39 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView()
+
+        // Observe state
+        viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
+            handleState(state)
+        }
     }
 
-    private fun setStory(stories: List<Story>) {
-        val adapter = StoryAdapter {
+    private fun handleState(state: HomeState) {
+        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
+
+        if (state.error != null) {
+            showToast(state.error)
+        }
+
+        if (state.stories.isNotEmpty()) {
+            adapter.submitList(state.stories)
+        }
+    }
+
+    private fun recyclerView() { binding.apply {
+        val layoutManager = LinearLayoutManager(requireContext())
+        rvStory.layoutManager = layoutManager
+
+        adapter = StoryAdapter {
             val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(it)
             findNavController().navigate(action)
         }
 
-        adapter.submitList(stories)
-        binding.rvStory.adapter = adapter
-    }
+        rvStory.adapter = adapter
+    }}
 
-    private fun recyclerView() {
-        val layoutManager = LinearLayoutManager(requireContext())
-        binding.rvStory.layoutManager = layoutManager
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

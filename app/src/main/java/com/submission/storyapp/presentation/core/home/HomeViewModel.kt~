@@ -23,11 +23,14 @@ class HomeViewModel @Inject constructor(
     var state = MutableStateFlow(HomeState())
         private set
 
-    init { getToken() }
+    init {
+        getToken().also {
+            collectStories()
+        }
+    }
 
     private fun getToken() { viewModelScope.launch {
-        state.value = state.value.copy(token = sessionUseCases.getSession().firstOrNull() ?: "")
-        collectStories()
+        state.value = state.value.copy()
     }}
 
     private fun collectStories() { storyUseCases.getStories("Bearer ${state.value.token}")

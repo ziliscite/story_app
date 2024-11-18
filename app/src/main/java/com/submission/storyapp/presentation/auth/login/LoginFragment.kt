@@ -37,7 +37,6 @@ class LoginFragment : Fragment() {
 
         animate()
         observeInput()
-        observeButton()
         navigation()
     }
 
@@ -74,10 +73,6 @@ class LoginFragment : Fragment() {
         passwordEditText.addTextChangedListener {
             viewModel.updatePassword(it.toString())
         }
-    }}
-
-    private fun observeButton() { binding.apply {
-        signInButton.isEnabled = !(emailEditText.error != null || passwordEditText.error != null)
     }}
 
     private fun navigation() { binding.apply {

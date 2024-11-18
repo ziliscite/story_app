@@ -29,10 +29,6 @@ class LoginViewModel @Inject constructor(
         state.value = state.value.copy(password = password)
     }
 
-    fun isValid(): Boolean { state.value.run {
-        return email.isNotBlank() && password.isNotBlank()
-    }}
-
     fun signIn(): LiveData<ResponseWrapper<SignInResponse>> { state.value.run {
         return authUseCases.signIn(email, password)
     }}

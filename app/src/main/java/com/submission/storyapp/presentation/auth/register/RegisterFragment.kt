@@ -36,7 +36,6 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         animate()
         observeInput()
-        observeButton()
         navigation()
     }
 
@@ -81,10 +80,6 @@ class RegisterFragment : Fragment() {
         }
     }}
 
-    private fun observeButton() { binding.apply {
-        signUpButton.isEnabled = !(emailEditText.error != null || passwordEditText.error != null)
-    }}
-
     private fun navigation() { binding.apply {
         signInTextView.setOnClickListener {
             val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment()
@@ -104,7 +99,7 @@ class RegisterFragment : Fragment() {
             is ResponseWrapper.Success -> {
                 binding.lpiLoading.visibility = View.GONE
 
-                showToast("Signed up successfully")
+                showToast("Signed up successful")
 
                 val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment()
                 findNavController().navigate(action)

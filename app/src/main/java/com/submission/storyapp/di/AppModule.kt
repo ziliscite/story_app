@@ -1,8 +1,10 @@
 package com.submission.storyapp.di
 
 import com.submission.storyapp.data.remote.retrofit.AuthService
+import com.submission.storyapp.data.remote.retrofit.StoryService
 import com.submission.storyapp.domain.repository.AuthRepository
 import com.submission.storyapp.domain.repository.LocalUserRepository
+import com.submission.storyapp.domain.repository.StoryRepository
 import com.submission.storyapp.domain.usecases.auth.AuthUseCases
 import com.submission.storyapp.domain.usecases.auth.SignIn
 import com.submission.storyapp.domain.usecases.auth.SignUp
@@ -10,10 +12,16 @@ import com.submission.storyapp.domain.usecases.session.ClearSession
 import com.submission.storyapp.domain.usecases.session.GetSession
 import com.submission.storyapp.domain.usecases.session.SaveSession
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
+import com.submission.storyapp.domain.usecases.story.GetStories
+import com.submission.storyapp.domain.usecases.story.PostStory
+import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -37,18 +45,58 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthService(): AuthService {
+    fun provideHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder()
+
+        // Cannot be done, due to injection being performed at compile time
+//        // Use the token from the datastore preferences
+//        val token = runBlocking {
+//            sessionUseCases.getSession().firstOrNull()
+//        }
+//
+//        return if (token != null) {
+//            val authInterceptor = Interceptor { chain ->
+//                val request = chain.request()
+//
+//                val requestHeaders = request.newBuilder()
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .build()
+//
+//                chain.proceed(requestHeaders)
+//            }
+//
+//            OkHttpClient.Builder()
+//                .addInterceptor(loggingInterceptor)
+//                .addInterceptor(authInterceptor)
+//                .build()
+//        } else {
+//            OkHttpClient.Builder()
+//                .addInterceptor(loggingInterceptor)
+//                .build()
+//        }
+
+        return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .build()
+    }
 
-        val retrofit = Retrofit.Builder()
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        client: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://story-api.dicoding.dev/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
+    }
 
+    @Provides
+    @Singleton
+    fun provideAuthService(
+        retrofit: Retrofit
+    ): AuthService {
         return retrofit.create(AuthService::class.java)
     }
 
@@ -60,6 +108,25 @@ object AppModule {
         return AuthUseCases(
             signIn = SignIn(authRepository),
             signUp = SignUp(authRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideStoryService(
+        retrofit: Retrofit
+    ): StoryService {
+        return retrofit.create(StoryService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStoryUseCases(
+        storyRepository: StoryRepository
+    ): StoryUseCases {
+        return StoryUseCases(
+            getStories = GetStories(storyRepository),
+            postStory = PostStory(storyRepository)
         )
     }
 }
