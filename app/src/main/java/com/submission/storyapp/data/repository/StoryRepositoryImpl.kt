@@ -9,8 +9,12 @@ import com.submission.storyapp.domain.repository.StoryRepository
 import com.submission.storyapp.utils.ResponseWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 class StoryRepositoryImpl @Inject constructor(
@@ -37,12 +41,20 @@ class StoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postStories(
-        bearerToken: String, file: MultipartBody.Part, description: RequestBody
+    override fun postStories(
+        bearerToken: String, file: File, description: String
     ): Flow<ResponseWrapper<String>> = flow {
         emit(ResponseWrapper.Loading)
+
+        val requestBody = description.toRequestBody("text/plain".toMediaType())
+        val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+
+        val multipartBody = MultipartBody.Part.createFormData(
+            "photo", file.name, requestImageFile
+        )
+
         try {
-            val response = storyService.postStory(bearerToken, file, description)
+            val response = storyService.postStory(bearerToken, multipartBody, requestBody)
 
             if (response.error) {
                 emit(ResponseWrapper.Error(response.message))

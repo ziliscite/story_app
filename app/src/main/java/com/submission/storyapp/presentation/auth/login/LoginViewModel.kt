@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
         return authUseCases.signIn(email, password)
     }}
 
-    // Previous attempt had race condition, perhaps due to fragment being destroyed by navigating before saving session
+    // Using viewModelScope result in race condition, perhaps due to fragment being destroyed by navigating
     fun onSignedIn(auth: Auth) { CoroutineScope(Dispatchers.IO).launch {
         sessionUseCases.saveSession(auth.token)
     }}

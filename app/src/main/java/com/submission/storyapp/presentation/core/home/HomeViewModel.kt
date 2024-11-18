@@ -30,7 +30,8 @@ class HomeViewModel @Inject constructor(
         collectStories()
     }}
 
-    private fun collectStories() { storyUseCases.getStories("Bearer ${state.value.token}")
+    private fun collectStories() {
+        storyUseCases.getStories("Bearer ${state.value.token}")
         .onEach { response ->
             when (response) {
                 is ResponseWrapper.Success -> {
@@ -53,13 +54,6 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-        }
-        .catch { exception ->
-            state.value = state.value.copy(
-                loading = false,
-                error = exception.localizedMessage ?: "An unexpected error occurred"
-            )
-        }
-        .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
     }
 }

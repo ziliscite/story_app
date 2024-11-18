@@ -20,4 +20,66 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <ImageView
+        android:id="@+id/ivStory"
+        android:layout_width="0dp"
+        android:layout_height="400dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/outline_image_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:src="@drawable/sticker_6" />
+
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/camera"
+        app:layout_constraintTop_toBottomOf="@id/ivStory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnGallery"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp" />
+
+    <Button
+        android:id="@+id/btnGallery"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/gallery"
+        app:layout_constraintTop_toBottomOf="@id/ivStory"
+        app:layout_constraintStart_toEndOf="@id/btnCamera"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp" />
+
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:autofillHints=""
+        android:padding="8dp"
+        android:layout_margin="16dp"
+        android:ems="10"
+        android:gravity="top|start"
+        android:inputType="textMultiLine"
+        android:hint="@string/description"
+        tools:ignore="SpeakableTextPresentCheck"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGallery" />
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/upload"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@id/etDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

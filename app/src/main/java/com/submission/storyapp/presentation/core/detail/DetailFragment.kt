@@ -2,7 +2,6 @@ package com.submission.storyapp.presentation.core.detail
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,8 +14,6 @@ import com.submission.storyapp.domain.models.Story
 class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: DetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -5,13 +5,14 @@ import com.submission.storyapp.utils.ResponseWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.File
 
 interface StoryRepository {
     fun getStories(bearerToken: String): Flow<ResponseWrapper<List<Story>>>
 
-    suspend fun postStories(
+    fun postStories(
         bearerToken: String,
-        file: MultipartBody.Part,
-        description: RequestBody,
+        file: File,
+        description: String,
     ): Flow<ResponseWrapper<String>>
 }

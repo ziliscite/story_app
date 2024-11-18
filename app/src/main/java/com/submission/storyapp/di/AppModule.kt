@@ -19,9 +19,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -48,32 +45,7 @@ object AppModule {
     fun provideHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        // Cannot be done, due to injection being performed at compile time
-//        // Use the token from the datastore preferences
-//        val token = runBlocking {
-//            sessionUseCases.getSession().firstOrNull()
-//        }
-//
-//        return if (token != null) {
-//            val authInterceptor = Interceptor { chain ->
-//                val request = chain.request()
-//
-//                val requestHeaders = request.newBuilder()
-//                    .addHeader("Authorization", "Bearer $token")
-//                    .build()
-//
-//                chain.proceed(requestHeaders)
-//            }
-//
-//            OkHttpClient.Builder()
-//                .addInterceptor(loggingInterceptor)
-//                .addInterceptor(authInterceptor)
-//                .build()
-//        } else {
-//            OkHttpClient.Builder()
-//                .addInterceptor(loggingInterceptor)
-//                .build()
-//        }
+        // Cannot add auth interceptor due to dependency injection being done at compile time
 
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
