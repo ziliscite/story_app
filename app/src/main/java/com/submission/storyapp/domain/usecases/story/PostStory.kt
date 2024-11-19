@@ -1,8 +1,8 @@
 package com.submission.storyapp.domain.usecases.story
 
-import androidx.lifecycle.LiveData
 import com.submission.storyapp.domain.repository.StoryRepository
 import com.submission.storyapp.utils.ResponseWrapper
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 class PostStory(
@@ -12,7 +12,7 @@ class PostStory(
         bearerToken: String,
         file: File,
         description: String,
-    ): LiveData<ResponseWrapper<String>> {
+    ): Flow<ResponseWrapper<String>> {
         return storyRepository.postStories(bearerToken, file, description)
     }
 }
