@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.submission.storyapp.databinding.FragmentCreateBinding
@@ -42,8 +41,10 @@ class CreateFragment : Fragment() {
         observeInput()
         button()
 
-        viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
-            handleState(state)
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            state?.let {
+                handleState(it)
+            }
         }
     }
 
@@ -57,7 +58,7 @@ class CreateFragment : Fragment() {
         }
 
         btnUpload.setOnClickListener { lifecycleScope.launch {
-            viewModel.state.value.uri?.let {
+            viewModel.state.value?.uri?.let {
                 val imageFile = uriToFile(it, requireContext()).reduceFileImage()
                 viewModel.postStory(imageFile)
             } ?: showToast("No media selected")
@@ -115,7 +116,9 @@ class CreateFragment : Fragment() {
 
     private fun startCamera() {
         viewModel.updateUri(getImageUri(requireContext()))
-        launcherIntentCamera.launch(viewModel.state.value.uri!!)
+        viewModel.state.value?.uri?.let {
+            launcherIntentCamera.launch(it)
+        }
     }
 
     private fun showToast(message: String) {

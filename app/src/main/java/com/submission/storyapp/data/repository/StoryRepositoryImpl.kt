@@ -43,7 +43,7 @@ class StoryRepositoryImpl @Inject constructor(
 
     override fun postStories(
         bearerToken: String, file: File, description: String
-    ): Flow<ResponseWrapper<String>> = flow {
+    ): LiveData<ResponseWrapper<String>> = liveData {
         emit(ResponseWrapper.Loading)
 
         val requestBody = description.toRequestBody("text/plain".toMediaType())
@@ -58,7 +58,7 @@ class StoryRepositoryImpl @Inject constructor(
 
             if (response.error) {
                 emit(ResponseWrapper.Error(response.message))
-                return@flow
+                return@liveData
             }
 
             emit(ResponseWrapper.Success(response.message))
