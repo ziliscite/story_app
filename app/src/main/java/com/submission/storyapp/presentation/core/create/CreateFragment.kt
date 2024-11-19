@@ -21,7 +21,9 @@ import com.submission.storyapp.utils.getImageUri
 import com.submission.storyapp.utils.reduceFileImage
 import com.submission.storyapp.utils.uriToFile
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class CreateFragment : Fragment() {
@@ -59,7 +61,9 @@ class CreateFragment : Fragment() {
         }
 
         binding.btnUpload.setOnClickListener {
-            observeOnUpload()
+            viewModel.state.value.uri?.let {
+                observeOnUpload(it)
+            } ?: showToast("No media selected")
         }
     }}
 
@@ -86,21 +90,26 @@ class CreateFragment : Fragment() {
         }
     }
 
-    private fun observeOnUpload() {
-        val uri = viewModel.state.value.uri
+    private fun observeOnUpload(uri: Uri) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Perform file conversion in a background thread to avoid blocking the main thread
+                val imageFile = uriToFile(uri, requireContext()).reduceFileImage()
 
-        if (uri == null) {
-            showToast("No media selected")
-            return
-        }
-
-        val imageFile = uriToFile(uri, requireContext()).reduceFileImage()
-
-        viewModel.postStory(imageFile).observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is ResponseWrapper.Success -> viewModel.onSuccess(response.data)
-                is ResponseWrapper.Error -> viewModel.onError(response.error)
-                is ResponseWrapper.Loading -> viewModel.onLoading()
+                // Post to ViewModel on the main thread
+                withContext(Dispatchers.Main) {
+                    viewModel.postStory(imageFile).observe(viewLifecycleOwner) { response ->
+                        when (response) {
+                            is ResponseWrapper.Success -> viewModel.onSuccess(response.data)
+                            is ResponseWrapper.Error -> viewModel.onError(response.error)
+                            is ResponseWrapper.Loading -> viewModel.onLoading()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showToast("Failed to process image: ${e.message}")
+                }
             }
         }
     }
