@@ -1,7 +1,7 @@
 package com.submission.storyapp.domain.usecases.auth
 
 import androidx.lifecycle.LiveData
-import com.submission.storyapp.data.remote.responses.SignInResponse
+import com.submission.storyapp.domain.models.Auth
 import com.submission.storyapp.domain.repository.AuthRepository
 import com.submission.storyapp.utils.ResponseWrapper
 
@@ -10,7 +10,7 @@ class SignIn(
 ) {
     operator fun invoke(
         email: String, password: String
-    ): LiveData<ResponseWrapper<SignInResponse>> {
+    ): LiveData<ResponseWrapper<Auth>> {
         return authRepository.signIn(email, password)
     }
 }

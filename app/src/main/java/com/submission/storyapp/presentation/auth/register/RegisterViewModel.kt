@@ -27,7 +27,7 @@ class RegisterViewModel @Inject constructor(
         state.value = state.value.copy(password = password)
     }
 
-    fun signUp(): LiveData<ResponseWrapper<SignUpResponse>> { state.value.run {
+    fun signUp(): LiveData<ResponseWrapper<String>> { state.value.run {
         return authUseCases.signUp(name, email, password)
     }}
 }

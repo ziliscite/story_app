@@ -1,7 +1,6 @@
 package com.submission.storyapp.domain.usecases.auth
 
 import androidx.lifecycle.LiveData
-import com.submission.storyapp.data.remote.responses.SignUpResponse
 import com.submission.storyapp.domain.repository.AuthRepository
 import com.submission.storyapp.utils.ResponseWrapper
 
@@ -10,7 +9,7 @@ class SignUp(
 ) {
     operator fun invoke(
         name: String, email: String, password: String
-    ): LiveData<ResponseWrapper<SignUpResponse>> {
+    ): LiveData<ResponseWrapper<String>> {
         return authRepository.signUp(name, email, password)
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.liveData
 import com.submission.storyapp.data.remote.responses.SignInResponse
 import com.submission.storyapp.data.remote.responses.SignUpResponse
 import com.submission.storyapp.data.remote.retrofit.AuthService
+import com.submission.storyapp.domain.models.Auth
 import com.submission.storyapp.domain.repository.AuthRepository
 import com.submission.storyapp.utils.ResponseWrapper
 import javax.inject.Inject
@@ -14,11 +15,17 @@ class AuthRepositoryImpl @Inject constructor(
 ): AuthRepository {
     override fun signIn(
         email: String, password: String
-    ): LiveData<ResponseWrapper<SignInResponse>> = liveData {
+    ): LiveData<ResponseWrapper<Auth>> = liveData {
         emit(ResponseWrapper.Loading)
         try {
             val response = authService.login(email, password)
-            emit(ResponseWrapper.Success(response))
+
+            if (response.error) {
+                emit(ResponseWrapper.Error(response.message))
+                return@liveData
+            }
+
+            emit(ResponseWrapper.Success(response.loginResult))
         } catch (e: Exception) {
             emit(ResponseWrapper.Error(e.message.toString()))
         }
@@ -26,11 +33,17 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun signUp(
         name: String, email: String, password: String
-    ): LiveData<ResponseWrapper<SignUpResponse>> = liveData {
+    ): LiveData<ResponseWrapper<String>> = liveData {
         emit(ResponseWrapper.Loading)
         try {
             val response = authService.register(name, email, password)
-            emit(ResponseWrapper.Success(response))
+
+            if (response.error) {
+                emit(ResponseWrapper.Error(response.message))
+                return@liveData
+            }
+
+            emit(ResponseWrapper.Success(response.message))
         } catch (e: Exception) {
             emit(ResponseWrapper.Error(e.message.toString()))
         }

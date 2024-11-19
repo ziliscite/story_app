@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(
         state.value = state.value.copy(password = password)
     }
 
-    fun signIn(): LiveData<ResponseWrapper<SignInResponse>> { state.value.run {
+    fun signIn(): LiveData<ResponseWrapper<Auth>> { state.value.run {
         return authUseCases.signIn(email, password)
     }}
 

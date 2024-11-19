@@ -107,7 +107,7 @@ class RegisterFragment : Fragment() {
             is ResponseWrapper.Error -> {
                 binding.lpiLoading.visibility = View.GONE
 
-                showToast("Signed up failed")
+                showToast(response.error)
             }
             is ResponseWrapper.Loading -> {
                 binding.lpiLoading.visibility = View.VISIBLE
