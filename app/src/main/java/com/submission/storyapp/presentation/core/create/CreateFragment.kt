@@ -133,9 +133,15 @@ class CreateFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     viewModel.postStory(imageFile).observe(viewLifecycleOwner) { response ->
                         when (response) {
-                            is ResponseWrapper.Success -> viewModel.onSuccess(response.data)
-                            is ResponseWrapper.Error -> viewModel.onError(response.error)
-                            is ResponseWrapper.Loading -> viewModel.onLoading()
+                            is ResponseWrapper.Success -> {
+                                viewModel.onSuccess(response.data)
+                            }
+                            is ResponseWrapper.Error -> {
+                                viewModel.onError(response.error)
+                            }
+                            is ResponseWrapper.Loading -> {
+                                viewModel.onLoading()
+                            }
                         }
                     }
                 }
