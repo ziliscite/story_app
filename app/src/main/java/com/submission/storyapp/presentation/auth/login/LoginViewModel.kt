@@ -19,6 +19,7 @@ class LoginViewModel @Inject constructor(
     private val sessionUseCases: SessionUseCases,
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
+    // Trying jetpack compose style
     private var state = MutableStateFlow(LoginState())
 
     fun updateEmail(email: String) {

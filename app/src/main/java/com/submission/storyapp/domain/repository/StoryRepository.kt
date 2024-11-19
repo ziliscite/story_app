@@ -1,18 +1,16 @@
 package com.submission.storyapp.domain.repository
 
+import androidx.lifecycle.LiveData
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.utils.ResponseWrapper
-import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
 
 interface StoryRepository {
-    fun getStories(bearerToken: String): Flow<ResponseWrapper<List<Story>>>
+    fun getStories(bearerToken: String): LiveData<ResponseWrapper<List<Story>>>
 
     fun postStories(
         bearerToken: String,
-        file: File,
+        file: File?,
         description: String,
-    ): Flow<ResponseWrapper<String>>
+    ): LiveData<ResponseWrapper<String>>
 }

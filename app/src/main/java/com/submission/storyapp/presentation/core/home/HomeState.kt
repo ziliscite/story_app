@@ -6,5 +6,6 @@ data class HomeState(
     val token: String = "",
     val stories: List<Story> = emptyList(),
     val loading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val refresh: Boolean = false
 )

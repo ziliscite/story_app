@@ -3,6 +3,7 @@ package com.submission.storyapp.presentation.core.create
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.submission.storyapp.databinding.FragmentCreateBinding
+import com.submission.storyapp.utils.ResponseWrapper
 import com.submission.storyapp.utils.getImageUri
 import com.submission.storyapp.utils.reduceFileImage
 import com.submission.storyapp.utils.uriToFile
@@ -39,8 +41,8 @@ class CreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeInput()
         button()
+        observeInput()
 
         viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
             handleState(state)
@@ -56,12 +58,15 @@ class CreateFragment : Fragment() {
             startCamera()
         }
 
-        btnUpload.setOnClickListener { lifecycleScope.launch {
-            viewModel.state.value.uri?.let {
-                val imageFile = uriToFile(it, requireContext()).reduceFileImage()
-                viewModel.postStory(imageFile)
-            } ?: showToast("No media selected")
-        }}
+        binding.btnUpload.setOnClickListener {
+            observeOnUpload()
+        }
+    }}
+
+    private fun observeInput() { binding.apply {
+        etDescription.addTextChangedListener {
+            viewModel.updateDescription(it.toString())
+        }
     }}
 
     private fun handleState(state: CreateState) {
@@ -81,11 +86,24 @@ class CreateFragment : Fragment() {
         }
     }
 
-    private fun observeInput() { binding.apply {
-        etDescription.addTextChangedListener {
-            viewModel.updateDescription(it.toString())
+    private fun observeOnUpload() {
+        val uri = viewModel.state.value.uri
+
+        if (uri == null) {
+            showToast("No media selected")
+            return
         }
-    }}
+
+        val imageFile = uriToFile(uri, requireContext()).reduceFileImage()
+
+        viewModel.postStory(imageFile).observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is ResponseWrapper.Success -> viewModel.onSuccess(response.data)
+                is ResponseWrapper.Error -> viewModel.onError(response.error)
+                is ResponseWrapper.Loading -> viewModel.onLoading()
+            }
+        }
+    }
 
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()

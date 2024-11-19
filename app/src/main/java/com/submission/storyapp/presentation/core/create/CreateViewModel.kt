@@ -1,16 +1,17 @@
 package com.submission.storyapp.presentation.core.create
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -29,39 +30,38 @@ class CreateViewModel @Inject constructor (
         state.value = state.value.copy(token = sessionUseCases.getSession().firstOrNull() ?: "")
     }}
 
-    fun postStory(file: File) {
-        storyUseCases.postStory("Bearer ${state.value.token}", file, state.value.description)
-        .onEach { response ->
-            when (response) {
-                is ResponseWrapper.Success -> {
-                    state.value = state.value.copy(
-                        message = response.data,
-                        loading = false,
-                        error = null
-                    )
-                }
-                is ResponseWrapper.Error -> {
-                    state.value = state.value.copy(
-                        loading = false,
-                        error = response.error
-                    )
-                }
-                ResponseWrapper.Loading -> {
-                    state.value = state.value.copy(
-                        loading = true,
-                        error = null
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
+    fun postStory(file: File): LiveData<ResponseWrapper<String>> {
+        return storyUseCases.postStory("Bearer ${state.value.token}", file, state.value.description)
     }
 
-    fun updateDescription(description: String) {
-        state.value = state.value.copy(description = description)
+    fun onSuccess(message: String) {
+        state.value = state.value.copy(
+            message = message,
+            loading = false,
+            error = null
+        )
+    }
+
+    fun onError(error: String) {
+        state.value = state.value.copy(
+            error = error,
+            loading = false
+        )
+    }
+
+    fun onLoading() {
+        state.value = state.value.copy(
+            error = null,
+            loading = true
+        )
     }
 
     fun updateUri(uri: Uri) {
         state.value = state.value.copy(uri = uri)
+    }
+
+    fun updateDescription(description: String) {
+        state.value = state.value.copy(description = description)
     }
 
     fun updatePreviousUri() {

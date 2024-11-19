@@ -11,6 +11,7 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.databinding.FragmentHomeBinding
+import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,12 +36,17 @@ class HomeFragment : Fragment() {
 
         recyclerView()
         handleButton()
+        handleRefresh()
 
         // Observe state
         viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
             handleState(state)
         }
     }
+
+    private fun handleRefresh() { binding.srfLayout.setOnRefreshListener {
+        viewModel.refresh()
+    }}
 
     private fun handleButton() { binding.fabCreate.setOnClickListener {
         val action = HomeFragmentDirections.actionHomeFragmentToCreateFragment()
@@ -49,6 +55,8 @@ class HomeFragment : Fragment() {
 
     private fun handleState(state: HomeState) {
         binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
+
+        binding.srfLayout.isRefreshing = state.refresh
 
         if (state.error != null) {
             showToast(state.error)
@@ -77,6 +85,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.removeObserver()
         _binding = null
     }
 }
