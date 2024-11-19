@@ -2,8 +2,6 @@ package com.submission.storyapp.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import com.submission.storyapp.data.remote.responses.SignInResponse
-import com.submission.storyapp.data.remote.responses.SignUpResponse
 import com.submission.storyapp.data.remote.retrofit.AuthService
 import com.submission.storyapp.domain.models.Auth
 import com.submission.storyapp.domain.repository.AuthRepository

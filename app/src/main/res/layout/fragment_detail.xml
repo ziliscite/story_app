@@ -12,15 +12,18 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:alpha="0"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_theme_onPrimary"
-            app:title="Create Story"
+            android:background="@color/md_theme_secondary"
+            app:titleTextColor="@color/md_theme_onPrimary"
+            app:title="@string/story"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:navigationIconTint="@color/md_theme_onSurface" />
+            app:navigationIconTint="@color/md_theme_onSurface"
+            tools:alpha="100" />
 
         <ImageView
             android:id="@+id/ivStory"

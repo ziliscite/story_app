@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">storyapp</string>
     <string name="signup">Register</string>
     <string name="login">Sign In</string>
@@ -21,11 +21,16 @@
     <string name="greeting">Halo %1$s,</string>
     <string name="todo">TODO</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="email_hint">example@google.com</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="description">Description</string>
     <string name="upload">Upload</string>
+    <string name="create_story">Create Story</string>
+    <string name="story">Story</string>
+    <string name="story_app">Story App</string>
+    <string name="yes">Yes, please</string>
+    <string name="no">No, I\'m kidding</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to leave?</string>
+    <string name="confirmation">Sign Out</string>
 </resources>

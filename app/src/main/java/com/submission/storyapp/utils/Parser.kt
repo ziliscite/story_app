@@ -20,11 +20,3 @@ fun String.parseDate(): String? {
 fun CharSequence.parseEmail(): Boolean {
     return Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
-
-// Regex to make sure the password is at least 8 characters long,
-// contains at least one number, one lowercase letter, and one uppercase letter.
-// However, this will not be used.
-fun String.parsePassword(): Boolean {
-    val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$"
-    return Regex(passwordPattern).matches(this)
-}

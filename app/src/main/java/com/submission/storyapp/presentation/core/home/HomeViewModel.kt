@@ -8,6 +8,8 @@ import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -28,6 +30,11 @@ class HomeViewModel @Inject constructor(
     private fun getToken() { viewModelScope.launch {
         state.value = state.value.copy(token = sessionUseCases.getSession().firstOrNull() ?: "")
         collectStories()
+    }}
+
+    // So that it doesn't get interrupted
+    fun logout() { CoroutineScope(Dispatchers.IO).launch {
+        sessionUseCases.clearSession()
     }}
 
     private fun collectStories() {

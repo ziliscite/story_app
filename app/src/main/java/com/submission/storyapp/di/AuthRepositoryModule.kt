@@ -8,6 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// These modules are 100% necessary for Hilt. Not sure why it says unused.
+@Suppress("unused", "unused", "unused", "unused", "unused", "unused")
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AuthRepositoryModule {
