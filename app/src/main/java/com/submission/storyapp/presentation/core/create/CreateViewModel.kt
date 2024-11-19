@@ -2,10 +2,8 @@ package com.submission.storyapp.presentation.core.create
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import com.submission.storyapp.utils.ResponseWrapper
@@ -62,6 +60,10 @@ class CreateViewModel @Inject constructor (
 
     fun updateDescription(description: String) {
         state.value = state.value.copy(description = description)
+    }
+
+    fun clearError() {
+        state.value = state.value.copy(error = null)
     }
 
     fun updatePreviousUri() {

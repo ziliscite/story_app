@@ -6,19 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".presentation.core.create.CreateFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/md_theme_onPrimary"
+        android:alpha="0"
+        app:title="Create Story"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:navigationIconTint="@color/md_theme_onSurface"
+        tools:alpha="100" />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/lpiLoading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:indeterminate="true"
+        android:alpha="0"
         app:indicatorColor="@color/md_theme_primary"
         app:trackCornerRadius="2dp"
         app:trackThickness="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:visibility="visible"
+        tools:alpha="100" />
 
     <ImageView
         android:id="@+id/ivStory"
@@ -27,34 +43,40 @@
         android:scaleType="centerCrop"
         android:contentDescription="@string/todo"
         android:src="@drawable/outline_image_24"
-        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:src="@drawable/sticker_6" />
+        tools:src="@drawable/sticker_6"
+        tools:alpha="100" />
 
     <Button
         android:id="@+id/btnCamera"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/camera"
+        android:alpha="0"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintTop_toBottomOf="@id/ivStory"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnGallery"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp" />
+        tools:alpha="100" />
 
     <Button
         android:id="@+id/btnGallery"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/gallery"
+        android:alpha="0"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toBottomOf="@id/ivStory"
         app:layout_constraintStart_toEndOf="@id/btnCamera"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp" />
+        tools:alpha="100" />
 
     <EditText
         android:id="@+id/etDescription"
@@ -67,10 +89,12 @@
         android:gravity="top|start"
         android:inputType="textMultiLine"
         android:hint="@string/description"
-        tools:ignore="SpeakableTextPresentCheck"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGallery" />
+        app:layout_constraintTop_toBottomOf="@+id/btnGallery"
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:alpha="100" />
 
     <Button
         android:id="@+id/btnUpload"
@@ -78,8 +102,10 @@
         android:layout_height="wrap_content"
         android:text="@string/upload"
         android:layout_margin="16dp"
+        android:layout_marginTop="12dp"
+        android:alpha="0"
         app:layout_constraintTop_toBottomOf="@id/etDescription"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        tools:alpha="100" />
 </androidx.constraintlayout.widget.ConstraintLayout>

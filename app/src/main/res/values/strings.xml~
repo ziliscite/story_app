@@ -4,6 +4,8 @@
     <string name="login">Sign In</string>
     <string name="logout">Sign Out</string>
 
+    <string name="message_welcome_page">Mau belajar Android, iOS, Machine Learning, Cloud, Front-End, Back-End, dan bidang IT lainnya? Di Dicoding aja!</string>
+
     <string name="title_welcome_page">Welcome to my Story App!</string>
 
     <string name="title_signup_page">New here?</string>

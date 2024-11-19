@@ -2,7 +2,6 @@ package com.submission.storyapp.presentation.auth.register
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.submission.storyapp.data.remote.responses.SignUpResponse
 import com.submission.storyapp.domain.usecases.auth.AuthUseCases
 import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.submission.storyapp.domain.models.Auth
 import com.submission.storyapp.utils.ResponseWrapper
 
-// Funny mistake to depend on the data layer instead of the domain layer
 interface AuthRepository {
     fun signIn(
         email: String, password: String

@@ -1,9 +1,10 @@
 package com.submission.storyapp.presentation.core.create
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
@@ -43,6 +45,8 @@ class CreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        inflateToolbar()
+        animate()
         button()
         observeInput()
 
@@ -50,6 +54,34 @@ class CreateFragment : Fragment() {
             handleState(state)
         }
     }
+
+    private fun inflateToolbar() { binding.apply {
+        // Set up the toolbar as the ActionBar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+    }}
+
+    private fun animate() { binding.apply {
+        val appbar = ObjectAnimator.ofFloat(toolbar, View.ALPHA, 1f).setDuration(160)
+        val image = ObjectAnimator.ofFloat(ivStory, View.ALPHA, 1f).setDuration(160)
+        val camera = ObjectAnimator.ofFloat(btnCamera, View.ALPHA, 1f).setDuration(160)
+        val gallery = ObjectAnimator.ofFloat(btnGallery, View.ALPHA, 1f).setDuration(160)
+        val description = ObjectAnimator.ofFloat(etDescription, View.ALPHA, 1f).setDuration(160)
+        val upload = ObjectAnimator.ofFloat(btnUpload, View.ALPHA, 1f).setDuration(160)
+
+        AnimatorSet().apply {
+            playSequentially(
+                appbar, image,
+                camera, gallery,
+                description, upload
+            )
+            startDelay = 100
+        }.start()
+    }}
 
     private fun button() { binding.apply {
         btnGallery.setOnClickListener {
@@ -76,16 +108,17 @@ class CreateFragment : Fragment() {
     private fun handleState(state: CreateState) {
         binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
 
-        state.uri?.let {
-            binding.ivStory.setImageURI(it)
+        if (state.uri != null) {
+            binding.ivStory.setImageURI(state.uri)
         }
 
-        state.error?.let {
-            showToast(it)
+        if (state.error != null) {
+            showToast(state.error)
+            viewModel.clearError()
         }
 
-        state.message?.let {
-            showToast(it)
+        if (state.message != null) {
+            showToast(state.message)
             findNavController().popBackStack()
         }
     }
@@ -93,7 +126,7 @@ class CreateFragment : Fragment() {
     private fun observeOnUpload(uri: Uri) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Perform file conversion in a background thread to avoid blocking the main thread
+                // File conversion in a background thread to avoid blocking the main thread
                 val imageFile = uriToFile(uri, requireContext()).reduceFileImage()
 
                 // Post to ViewModel on the main thread
@@ -134,7 +167,7 @@ class CreateFragment : Fragment() {
     ) { isSuccess ->
         if (!isSuccess) {
             showToast("Failed to take picture")
-            viewModel.revertUri()
+            viewModel.revertUri() // Revert uri to previous image to avoid null
         } else {
             viewModel.updatePreviousUri()
         }

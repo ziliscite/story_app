@@ -2,7 +2,6 @@ package com.submission.storyapp.presentation.auth.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.submission.storyapp.data.remote.responses.SignInResponse
 import com.submission.storyapp.domain.models.Auth
 import com.submission.storyapp.domain.usecases.auth.AuthUseCases
 import com.submission.storyapp.domain.usecases.session.SessionUseCases

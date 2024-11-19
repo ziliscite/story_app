@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.submission.storyapp.databinding.FragmentDetailBinding
 import com.submission.storyapp.domain.models.Story
@@ -31,10 +33,22 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        inflateToolbar()
         animate()
     }
 
+    private fun inflateToolbar() { binding.apply {
+        // Set up the toolbar as the ActionBar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+    }}
+
     private fun animate() { binding.apply {
+        val appbar = ObjectAnimator.ofFloat(toolbar, View.ALPHA, 1f).setDuration(160)
         val image = ObjectAnimator.ofFloat(ivStory, View.ALPHA, 1f).setDuration(160)
         val title = ObjectAnimator.ofFloat(tvTitle, View.ALPHA, 1f).setDuration(160)
         val date = ObjectAnimator.ofFloat(tvDate, View.ALPHA, 1f).setDuration(160)
@@ -42,7 +56,7 @@ class DetailFragment : Fragment() {
 
         AnimatorSet().apply {
             playSequentially(
-                image, title,
+                appbar, image, title,
                 date, description,
             )
             startDelay = 100

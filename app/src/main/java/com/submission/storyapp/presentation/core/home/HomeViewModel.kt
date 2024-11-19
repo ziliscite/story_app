@@ -1,6 +1,5 @@
 package com.submission.storyapp.presentation.core.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
