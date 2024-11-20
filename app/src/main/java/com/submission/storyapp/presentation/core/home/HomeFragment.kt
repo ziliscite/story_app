@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.init()
         handleButton()
         handleRefresh()
         inflateActionBar()
@@ -51,6 +50,11 @@ class HomeFragment : Fragment() {
         viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
             handleState(state)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 
     private fun handleState(state: HomeState) {
@@ -107,7 +111,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun handleRefresh() { binding.srfLayout.setOnRefreshListener {
-        viewModel.refresh()
+        viewModel.retry()
     }}
 
     private fun handleButton() { binding.fabCreate.setOnClickListener {

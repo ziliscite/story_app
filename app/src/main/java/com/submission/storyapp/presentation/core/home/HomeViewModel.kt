@@ -23,6 +23,10 @@ class HomeViewModel @Inject constructor(
 
     private lateinit var storyObserver: Observer<ResponseWrapper<List<Story>>>
 
+    init {
+        collectStories()
+    }
+
     private fun collectStories() {
         storyObserver = Observer { response ->
             when (response) {
@@ -74,12 +78,12 @@ class HomeViewModel @Inject constructor(
         storyUseCases.getStories().removeObserver(storyObserver)
     }
 
-    fun init() {
+    fun retry() {
+        state.value = state.value.copy(refresh = true)
         collectStories()
     }
 
     fun refresh() {
-        state.value = state.value.copy(refresh = true)
         collectStories()
     }
 }
