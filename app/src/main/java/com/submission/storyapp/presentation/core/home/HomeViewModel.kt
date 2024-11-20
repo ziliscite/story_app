@@ -41,30 +41,41 @@ class HomeViewModel @Inject constructor(
         storyObserver = Observer { response ->
             when (response) {
                 is ResponseWrapper.Success -> {
-                    state.value = state.value.copy(
-                        stories = response.data,
-                        loading = false,
-                        error = null,
-                        refresh = false
-                    )
+                    onSuccess(response.data)
                 }
                 is ResponseWrapper.Error -> {
-                    state.value = state.value.copy(
-                        loading = false,
-                        error = response.error,
-                        refresh = false
-                    )
+                    onError(response.error)
                 }
                 ResponseWrapper.Loading -> {
-                    state.value = state.value.copy(
-                        loading = true,
-                        error = null,
-                        // don't refresh
-                    )
+                    onLoading()
                 }
             }
         }
         storyUseCases.getStories("Bearer ${state.value.token}").observeForever(storyObserver)
+    }
+
+    private fun onSuccess(stories: List<Story>) {
+        state.value = state.value.copy(
+            stories = stories,
+            loading = false,
+            error = null,
+            refresh = false
+        )
+    }
+
+    private fun onError(error: String) {
+        state.value = state.value.copy(
+            error = error,
+            loading = false,
+            refresh = false
+        )
+    }
+
+    private fun onLoading() {
+        state.value = state.value.copy(
+            error = null,
+            loading = true
+        )
     }
 
     fun refresh() { viewModelScope.launch {

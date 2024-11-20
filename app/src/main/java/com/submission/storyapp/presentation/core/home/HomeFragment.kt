@@ -98,7 +98,13 @@ class HomeFragment : Fragment() {
         }
 
         if (state.stories.isNotEmpty()) {
-            adapter.submitList(state.stories)
+            val oldSize = adapter.currentList.size
+            adapter.submitList(state.stories) {
+                // Scroll to top if new data has been added
+                if (state.stories.size > oldSize) {
+                    binding.rvStory.scrollToPosition(0)
+                }
+            }
         }
     }
 
@@ -116,6 +122,11 @@ class HomeFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 
     override fun onDestroyView() {
