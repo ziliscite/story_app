@@ -119,7 +119,9 @@ class CreateFragment : Fragment() {
 
         if (state.message != null) {
             showToast(state.message)
-            findNavController().popBackStack()
+
+            val action = CreateFragmentDirections.actionCreateFragmentToHomeFragment()
+            findNavController().navigate(action)
         }
     }
 

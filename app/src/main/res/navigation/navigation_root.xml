@@ -84,5 +84,11 @@
         android:id="@+id/createFragment"
         android:name="com.submission.storyapp.presentation.core.create.CreateFragment"
         android:label="fragment_create"
-        tools:layout="@layout/fragment_create" />
+        tools:layout="@layout/fragment_create" >
+        <action
+            android:id="@+id/action_createFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/createFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

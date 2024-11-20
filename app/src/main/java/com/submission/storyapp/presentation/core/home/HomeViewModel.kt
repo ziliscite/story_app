@@ -54,7 +54,8 @@ class HomeViewModel @Inject constructor(
             stories = stories,
             loading = false,
             error = null,
-            refresh = false
+            refresh = false,
+            scroll = true
         )
     }
 
@@ -62,14 +63,16 @@ class HomeViewModel @Inject constructor(
         state.value = state.value.copy(
             error = error,
             loading = false,
-            refresh = false
+            refresh = false,
+            scroll = false
         )
     }
 
     private fun onLoading() {
         state.value = state.value.copy(
             error = null,
-            loading = true
+            loading = true,
+            scroll = false
         )
     }
 

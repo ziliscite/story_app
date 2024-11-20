@@ -67,16 +67,15 @@ class HomeFragment : Fragment() {
         }
 
         handleStories(state.stories)
+
+        if (state.scroll) {
+            binding.rvStory.layoutManager?.scrollToPosition(0)
+        }
     }
 
     private fun handleStories(stories: List<Story>) {
         if (stories.isNotEmpty()) {
-            val oldSize = adapter.currentList.size
-            adapter.submitList(stories) {
-                if (stories.size > oldSize) {
-                    binding.rvStory.scrollToPosition(0)
-                }
-            }
+            adapter.submitList(stories)
         }
     }
 
