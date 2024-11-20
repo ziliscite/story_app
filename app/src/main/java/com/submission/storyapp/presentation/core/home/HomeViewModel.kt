@@ -1,9 +1,7 @@
 package com.submission.storyapp.presentation.core.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
@@ -12,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,38 +21,40 @@ class HomeViewModel @Inject constructor(
     var state = MutableStateFlow(HomeState())
         private set
 
-    init {
-        getStories()
-    }
+    private lateinit var storyObserver: Observer<ResponseWrapper<List<Story>>>
 
-    private fun getStories() = viewModelScope.launch {
-        _stories.postValue(ResponseWrapper.Loading)
-        try {
-            val response = storyUseCases.getStories().value
-            _stories.postValue(response ?: ResponseWrapper.Error("Empty response"))
-        } catch (e: Exception) {
-            _stories.postValue(ResponseWrapper.Error(e.message ?: "Failed to fetch stories"))
+    private fun collectStories() {
+        storyObserver = Observer { response ->
+            when (response) {
+                is ResponseWrapper.Success -> {
+                    onSuccess(response.data)
+                }
+                is ResponseWrapper.Error -> {
+                    onError(response.error)
+                }
+                ResponseWrapper.Loading -> {
+                    onLoading()
+                }
+            }
         }
+        storyUseCases.getStories().observeForever(storyObserver)
     }
-
-
-    private val _stories = MutableLiveData<ResponseWrapper<List<Story>>>()
-    val stories: LiveData<ResponseWrapper<List<Story>>> = _stories
 
     // Use CoroutineScope to make sure it doesn't get interrupted
     fun logout() { CoroutineScope(Dispatchers.IO).launch {
         sessionUseCases.clearSession()
     }}
 
-    fun onSuccess() {
+    private fun onSuccess(stories: List<Story>) {
         state.value = state.value.copy(
+            stories = stories,
             loading = false,
             error = null,
             refresh = false
         )
     }
 
-    fun onError(error: String) {
+    private fun onError(error: String) {
         state.value = state.value.copy(
             error = error,
             loading = false,
@@ -63,15 +62,24 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun onLoading() {
+    private fun onLoading() {
         state.value = state.value.copy(
             error = null,
             loading = true
         )
     }
 
+    // Will be removed when fragment is destroyed
+    fun removeObserver() {
+        storyUseCases.getStories().removeObserver(storyObserver)
+    }
+
+    fun init() {
+        collectStories()
+    }
+
     fun refresh() {
         state.value = state.value.copy(refresh = true)
-        getStories()
+        collectStories()
     }
 }

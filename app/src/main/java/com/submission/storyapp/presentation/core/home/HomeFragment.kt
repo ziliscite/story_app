@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.R
 import com.submission.storyapp.databinding.FragmentHomeBinding
 import com.submission.storyapp.domain.models.Story
-import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,30 +33,16 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        recyclerView()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView()
-
-        // Observe stories
-        viewModel.stories.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is ResponseWrapper.Success -> {
-                    handleStories(response.data)
-                    viewModel.onSuccess()
-                }
-                is ResponseWrapper.Error -> {
-                    viewModel.onError(response.error)
-                }
-                ResponseWrapper.Loading -> {
-                    viewModel.onLoading()
-                }
-            }
-        }
-
+        viewModel.init()
         handleButton()
         handleRefresh()
         inflateActionBar()
@@ -68,6 +53,18 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun handleState(state: HomeState) {
+        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
+
+        binding.srfLayout.isRefreshing = state.refresh
+
+        if (state.error != null) {
+            showToast(state.error)
+        }
+
+        handleStories(state.stories)
+    }
+
     private fun handleStories(stories: List<Story>) {
         if (stories.isNotEmpty()) {
             val oldSize = adapter.currentList.size
@@ -76,16 +73,6 @@ class HomeFragment : Fragment() {
                     binding.rvStory.scrollToPosition(0)
                 }
             }
-        }
-    }
-
-    private fun handleState(state: HomeState) {
-        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
-
-        binding.srfLayout.isRefreshing = state.refresh
-
-        if (state.error != null) {
-            showToast(state.error)
         }
     }
 
@@ -146,6 +133,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.removeObserver()
         _binding = null
     }
 }
