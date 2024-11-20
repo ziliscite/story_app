@@ -88,6 +88,7 @@
         <action
             android:id="@+id/action_createFragment_to_homeFragment"
             app:destination="@id/homeFragment"
+            app:launchSingleTop="true"
             app:popUpTo="@id/createFragment"
             app:popUpToInclusive="true" />
     </fragment>
