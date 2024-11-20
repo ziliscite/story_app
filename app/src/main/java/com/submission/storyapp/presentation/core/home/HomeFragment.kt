@@ -16,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.R
 import com.submission.storyapp.databinding.FragmentHomeBinding
+import com.submission.storyapp.domain.models.Story
+import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,13 +41,51 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView()
+
+        // Observe stories
+        viewModel.stories.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is ResponseWrapper.Success -> {
+                    handleStories(response.data)
+                    viewModel.onSuccess()
+                }
+                is ResponseWrapper.Error -> {
+                    viewModel.onError(response.error)
+                }
+                ResponseWrapper.Loading -> {
+                    viewModel.onLoading()
+                }
+            }
+        }
+
         handleButton()
         handleRefresh()
         inflateActionBar()
 
-        // Observe state
+        // Observe state / side effect
         viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
             handleState(state)
+        }
+    }
+
+    private fun handleStories(stories: List<Story>) {
+        if (stories.isNotEmpty()) {
+            val oldSize = adapter.currentList.size
+            adapter.submitList(stories) {
+                if (stories.size > oldSize) {
+                    binding.rvStory.scrollToPosition(0)
+                }
+            }
+        }
+    }
+
+    private fun handleState(state: HomeState) {
+        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
+
+        binding.srfLayout.isRefreshing = state.refresh
+
+        if (state.error != null) {
+            showToast(state.error)
         }
     }
 
@@ -88,26 +128,6 @@ class HomeFragment : Fragment() {
         findNavController().navigate(action)
     }}
 
-    private fun handleState(state: HomeState) {
-        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
-
-        binding.srfLayout.isRefreshing = state.refresh
-
-        if (state.error != null) {
-            showToast(state.error)
-        }
-
-        if (state.stories.isNotEmpty()) {
-            val oldSize = adapter.currentList.size
-            adapter.submitList(state.stories) {
-                // Scroll to top if new data has been added
-                if (state.stories.size > oldSize) {
-                    binding.rvStory.scrollToPosition(0)
-                }
-            }
-        }
-    }
-
     private fun recyclerView() { binding.apply {
         val layoutManager = LinearLayoutManager(requireContext())
         rvStory.layoutManager = layoutManager
@@ -124,14 +144,8 @@ class HomeFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.refresh()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.removeObserver()
         _binding = null
     }
 }

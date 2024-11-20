@@ -5,7 +5,9 @@ import androidx.lifecycle.liveData
 import com.submission.storyapp.data.remote.retrofit.StoryService
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.domain.repository.StoryRepository
+import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.utils.ResponseWrapper
+import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -14,31 +16,35 @@ import java.io.File
 import javax.inject.Inject
 
 class StoryRepositoryImpl @Inject constructor(
-    private val storyService: StoryService
+    private val storyService: StoryService,
+    private val sessionUseCases: SessionUseCases
 ): StoryRepository {
-    override fun getStories(bearerToken: String): LiveData<ResponseWrapper<List<Story>>> = liveData {
+    override fun getStories(): LiveData<ResponseWrapper<List<Story>>> = liveData {
         emit(ResponseWrapper.Loading)
-        try {
-            val response = storyService.getStories(bearerToken)
 
-            if (response.error) {
-                emit(ResponseWrapper.Error(response.message))
-                return@liveData
+        sessionUseCases.getSession().firstOrNull()?.let { token ->
+            try {
+                val response = storyService.getStories("Bearer $token" )
+
+                if (response.error) {
+                    emit(ResponseWrapper.Error(response.message))
+                    return@liveData
+                }
+
+                if (response.listStory.isEmpty()) {
+                    emit(ResponseWrapper.Error("No stories found"))
+                    return@liveData
+                }
+
+                emit(ResponseWrapper.Success(response.listStory))
+            } catch (e: Exception) {
+                emit(ResponseWrapper.Error(e.message.toString()))
             }
-
-            if (response.listStory.isEmpty()) {
-                emit(ResponseWrapper.Error("No stories found"))
-                return@liveData
-            }
-
-            emit(ResponseWrapper.Success(response.listStory))
-        } catch (e: Exception) {
-            emit(ResponseWrapper.Error(e.message.toString()))
-        }
+        } ?: emit(ResponseWrapper.Error("Unauthorized"))
     }
 
     override fun postStories(
-        bearerToken: String, file: File?, description: String
+        file: File?, description: String
     ): LiveData<ResponseWrapper<String>> = liveData {
         emit(ResponseWrapper.Loading)
 
@@ -59,17 +65,19 @@ class StoryRepositoryImpl @Inject constructor(
             "photo", file.name, requestImageFile
         )
 
-        try {
-            val response = storyService.postStory(bearerToken, multipartBody, requestBody)
+        sessionUseCases.getSession().firstOrNull()?.let { token ->
+            try {
+                val response = storyService.postStory("Bearer $token", multipartBody, requestBody)
 
-            if (response.error) {
-                emit(ResponseWrapper.Error(response.message))
-                return@liveData
+                if (response.error) {
+                    emit(ResponseWrapper.Error(response.message))
+                    return@liveData
+                }
+
+                emit(ResponseWrapper.Success(response.message))
+            } catch (e: Exception) {
+                emit(ResponseWrapper.Error(e.message.toString()))
             }
-
-            emit(ResponseWrapper.Success(response.message))
-        } catch (e: Exception) {
-            emit(ResponseWrapper.Error(e.message.toString()))
-        }
+        } ?: emit(ResponseWrapper.Error("Unauthorized"))
     }
 }

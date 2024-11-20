@@ -14,7 +14,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.submission.storyapp.R
 import com.submission.storyapp.di.WidgetEntryPoint
 import com.submission.storyapp.domain.models.Story
-import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import com.submission.storyapp.utils.ResponseWrapper
 import dagger.hilt.android.EntryPointAccessors
@@ -29,10 +28,6 @@ internal class StackRemoteViewsFactory (
 ) : RemoteViewsService.RemoteViewsFactory {
     private var widgetItems = listOf<Story>()
 
-    private val sessionUseCases: SessionUseCases by lazy {
-        EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java).sessionUseCases()
-    }
-
     private val storyUseCases: StoryUseCases by lazy {
         EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java).storyUseCases()
     }
@@ -41,26 +36,23 @@ internal class StackRemoteViewsFactory (
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() { coroutineScope.launch {
-        sessionUseCases.getSession().collect{ token ->
-            token?.let { validToken ->
-                storyUseCases.getStories("Bearer $validToken").asFlow().collect{
-                    when (it) {
-                        is ResponseWrapper.Success -> {
-                            Log.e("StackRemoteViewsFactory", "Success loading stories: ${it.data.size}")
-                            updateItems(it.data)
-                        }
-                        is ResponseWrapper.Error -> {
-                            Log.e("StackRemoteViewsFactory", "Error loading stories: ${it.error}")
-                        }
-                        ResponseWrapper.Loading -> {
-                            Log.d("StackRemoteViewsFactory", "Loading stories...")
-                        }
-                    }
+        storyUseCases.getStories().asFlow().collect{
+            when (it) {
+                is ResponseWrapper.Success -> {
+                    Log.e("StackRemoteViewsFactory", "Success loading stories: ${it.data.size}")
+                    updateItems(it.data)
+                }
+                is ResponseWrapper.Error -> {
+                    Log.e("StackRemoteViewsFactory", "Error loading stories: ${it.error}")
+                }
+                ResponseWrapper.Loading -> {
+                    Log.d("StackRemoteViewsFactory", "Loading stories...")
                 }
             }
         }
     }}
 
+    @Suppress("Deprecation")
     private fun updateItems(newStories: List<Story>) {
         widgetItems = newStories
         AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(

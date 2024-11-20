@@ -18,6 +18,7 @@ class StoryWidget : AppWidgetProvider() {
         private const val TOAST_ACTION = "com.submission.storyapp.TOAST_ACTION"
         const val EXTRA_ITEM = "com.submission.storyapp.EXTRA_ITEM"
 
+        @Suppress("Deprecation")
         private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val intent = Intent(context, StackWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

@@ -8,7 +8,7 @@ import com.submission.storyapp.utils.ResponseWrapper
 class GetStories(
     private val storyRepository: StoryRepository
 ) {
-    operator fun invoke(bearerToken: String): LiveData<ResponseWrapper<List<Story>>> {
-        return storyRepository.getStories(bearerToken)
+    operator fun invoke(): LiveData<ResponseWrapper<List<Story>>> {
+        return storyRepository.getStories()
     }
 }

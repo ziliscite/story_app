@@ -9,10 +9,9 @@ class PostStory(
     private val storyRepository: StoryRepository
 ) {
     operator fun invoke(
-        bearerToken: String,
         file: File?,
         description: String,
     ): LiveData<ResponseWrapper<String>> {
-        return storyRepository.postStories(bearerToken, file, description)
+        return storyRepository.postStories(file, description)
     }
 }

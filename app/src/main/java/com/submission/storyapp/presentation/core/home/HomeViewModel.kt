@@ -1,6 +1,7 @@
 package com.submission.storyapp.presentation.core.home
 
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.submission.storyapp.domain.models.Story
@@ -23,47 +24,38 @@ class HomeViewModel @Inject constructor(
     var state = MutableStateFlow(HomeState())
         private set
 
-    private lateinit var storyObserver: Observer<ResponseWrapper<List<Story>>>
+    init {
+        getStories()
+    }
 
-    init { getToken() }
+    private fun getStories() = viewModelScope.launch {
+        _stories.postValue(ResponseWrapper.Loading)
+        try {
+            val response = storyUseCases.getStories().value
+            _stories.postValue(response ?: ResponseWrapper.Error("Empty response"))
+        } catch (e: Exception) {
+            _stories.postValue(ResponseWrapper.Error(e.message ?: "Failed to fetch stories"))
+        }
+    }
 
-    private fun getToken() { viewModelScope.launch {
-        state.value = state.value.copy(token = sessionUseCases.getSession().firstOrNull() ?: "")
-        collectStories()
-    }}
+
+    private val _stories = MutableLiveData<ResponseWrapper<List<Story>>>()
+    val stories: LiveData<ResponseWrapper<List<Story>>> = _stories
 
     // Use CoroutineScope to make sure it doesn't get interrupted
     fun logout() { CoroutineScope(Dispatchers.IO).launch {
         sessionUseCases.clearSession()
     }}
 
-    private fun collectStories() {
-        storyObserver = Observer { response ->
-            when (response) {
-                is ResponseWrapper.Success -> {
-                    onSuccess(response.data)
-                }
-                is ResponseWrapper.Error -> {
-                    onError(response.error)
-                }
-                ResponseWrapper.Loading -> {
-                    onLoading()
-                }
-            }
-        }
-        storyUseCases.getStories("Bearer ${state.value.token}").observeForever(storyObserver)
-    }
-
-    private fun onSuccess(stories: List<Story>) {
+    fun onSuccess() {
         state.value = state.value.copy(
-            stories = stories,
             loading = false,
             error = null,
             refresh = false
         )
     }
 
-    private fun onError(error: String) {
+    fun onError(error: String) {
         state.value = state.value.copy(
             error = error,
             loading = false,
@@ -71,20 +63,15 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun onLoading() {
+    fun onLoading() {
         state.value = state.value.copy(
             error = null,
             loading = true
         )
     }
 
-    fun refresh() { viewModelScope.launch {
+    fun refresh() {
         state.value = state.value.copy(refresh = true)
-        collectStories()
-    }}
-
-    // Will be removed when fragment is destroyed
-    fun removeObserver() {
-        storyUseCases.getStories("Bearer ${state.value.token}").removeObserver(storyObserver)
+        getStories()
     }
 }
