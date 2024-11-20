@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
         collectStories()
     }}
 
-    // So that it doesn't get interrupted
+    // Use CoroutineScope to make sure it doesn't get interrupted
     fun logout() { CoroutineScope(Dispatchers.IO).launch {
         sessionUseCases.clearSession()
     }}

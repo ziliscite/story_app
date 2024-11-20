@@ -45,7 +45,7 @@ object AppModule {
     fun provideHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        // Cannot add auth interceptor due to dependency injection being done at compile time
+        // Cannot add auth interceptor due to dependency injection being done at compile time.
 
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
