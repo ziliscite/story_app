@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Splash
+    implementation(libs.androidx.core.splashscreen)
+
     // Storage
     implementation(libs.androidx.datastore.preferences)
 
@@ -69,7 +72,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    //Dependency Injection
+    // Dependency Injection
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
 }

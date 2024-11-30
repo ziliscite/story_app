@@ -1,5 +1,6 @@
 package com.submission.storyapp.di
 
+import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

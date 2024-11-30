@@ -14,7 +14,7 @@ interface StoryService {
     @GET("stories")
     suspend fun getStories(
         @Header("Authorization") bearerToken: String,
-    ) : StoriesResponse
+    ): StoriesResponse
 
     @Multipart
     @POST("stories")
