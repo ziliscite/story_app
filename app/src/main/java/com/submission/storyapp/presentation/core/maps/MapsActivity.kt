@@ -72,7 +72,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun addMarkers(stories: List<Story>) {
         stories.forEach { story ->
-            val latLng = LatLng(story.lat.toDouble(), story.lon.toDouble())
+            val latLng = LatLng(story.lat, story.lon)
             mMap.addMarker(MarkerOptions().position(latLng).title(story.name).snippet(story.description))
             boundsBuilder.include(latLng)
         }

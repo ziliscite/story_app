@@ -8,5 +8,8 @@ data class CreateState(
     val description: String = "",
     val loading: Boolean = false,
     val message: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isChecked: Boolean = false,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

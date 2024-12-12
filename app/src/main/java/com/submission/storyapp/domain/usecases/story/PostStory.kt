@@ -11,7 +11,8 @@ class PostStory(
     operator fun invoke(
         file: File?,
         description: String,
+        lat: Double?, lon: Double?
     ): LiveData<ResponseWrapper<String>> {
-        return storyRepository.postStories(file, description)
+        return storyRepository.postStories(file, description, lat, lon)
     }
 }

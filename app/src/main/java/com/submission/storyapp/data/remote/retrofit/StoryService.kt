@@ -29,5 +29,7 @@ interface StoryService {
         @Header("Authorization") bearerToken: String,
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
+        @Part("lat") lat: Double? = null,
+        @Part("lon") lon: Double? = null,
     ): PostStoryResponse
 }

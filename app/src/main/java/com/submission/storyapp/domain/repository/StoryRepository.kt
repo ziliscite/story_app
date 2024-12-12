@@ -8,5 +8,5 @@ import java.io.File
 interface StoryRepository {
     fun getStories(): LiveData<ResponseWrapper<List<Story>>>
     fun getStoriesWithLocation(): LiveData<ResponseWrapper<List<Story>>>
-    fun postStories(file: File?, description: String): LiveData<ResponseWrapper<String>>
+    fun postStories(file: File?, description: String, lat: Double?, lon: Double?): LiveData<ResponseWrapper<String>>
 }

@@ -1,10 +1,13 @@
 package com.submission.storyapp.presentation.core.create
 
+import android.Manifest
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +16,13 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.submission.storyapp.databinding.FragmentCreateBinding
 import com.submission.storyapp.utils.ResponseWrapper
 import com.submission.storyapp.utils.getImageUri
@@ -31,6 +37,8 @@ import kotlinx.coroutines.withContext
 class CreateFragment : Fragment() {
     private var _binding: FragmentCreateBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var locationClient : FusedLocationProviderClient
 
     private val viewModel: CreateViewModel by viewModels()
 
@@ -50,6 +58,7 @@ class CreateFragment : Fragment() {
         button()
         observeInput()
 
+        locationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
             handleState(state)
         }
@@ -71,13 +80,15 @@ class CreateFragment : Fragment() {
         val camera = ObjectAnimator.ofFloat(btnCamera, View.ALPHA, 1f).setDuration(160)
         val gallery = ObjectAnimator.ofFloat(btnGallery, View.ALPHA, 1f).setDuration(160)
         val description = ObjectAnimator.ofFloat(etDescription, View.ALPHA, 1f).setDuration(160)
+        val checkbox = ObjectAnimator.ofFloat(checkboxLayout, View.ALPHA, 1f).setDuration(160)
         val upload = ObjectAnimator.ofFloat(btnUpload, View.ALPHA, 1f).setDuration(160)
 
         AnimatorSet().apply {
             playSequentially(
                 appbar, image,
                 camera, gallery,
-                description, upload
+                description,
+                checkbox, upload
             )
             startDelay = 100
         }.start()
@@ -103,6 +114,10 @@ class CreateFragment : Fragment() {
         etDescription.addTextChangedListener {
             viewModel.updateDescription(it.toString())
         }
+
+        cbAgree.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) getLocation()
+        }
     }}
 
     private fun handleState(state: CreateState) {
@@ -122,6 +137,34 @@ class CreateFragment : Fragment() {
 
             val action = CreateFragmentDirections.actionCreateFragmentToHomeFragment()
             findNavController().navigate(action)
+        }
+
+        binding.cbAgree.isChecked = state.isChecked
+    }
+
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permission ->
+        if (permission[FINE_LOCATION] == true || permission[COARSE_LOCATION] == true) {
+            getLocation()
+        } else {
+            showToast("Access to location not granted.")
+            viewModel.updateCheck(false)
+        }
+    }
+
+    private fun getLocation() {
+        if(checkPermission(FINE_LOCATION) || checkPermission(COARSE_LOCATION)) {
+            locationClient.lastLocation.addOnSuccessListener {
+                it?.let { location ->
+                    viewModel.updateLocation(location.latitude, location.longitude)
+                } ?: run {
+                    showToast("Location is not found.")
+                    viewModel.updateCheck(false)
+                }
+            }
+        } else {
+            requestLocationPermissionLauncher.launch(arrayOf(FINE_LOCATION, COARSE_LOCATION))
         }
     }
 
@@ -190,8 +233,18 @@ class CreateFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun checkPermission(permission: String): Boolean{
+        return ContextCompat.checkSelfPermission(requireActivity(), permission) == PackageManager.PERMISSION_GRANTED
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
+        private const val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
+        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
     }
 }

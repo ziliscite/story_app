@@ -13,6 +13,7 @@
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="agree_label">Add current location?</string>
 
     <string name="title_login_page">Welcome Back!</string>
     <string name="message_login_page">Lets log back in to your account</string>

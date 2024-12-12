@@ -18,7 +18,7 @@ class CreateViewModel @Inject constructor (
         private set
 
     fun postStory(file: File): LiveData<ResponseWrapper<String>> {
-        return storyUseCases.postStory(file, state.value.description)
+        return storyUseCases.postStory(file, state.value.description, state.value.latitude, state.value.longitude)
     }
 
     fun onSuccess(message: String) {
@@ -49,6 +49,14 @@ class CreateViewModel @Inject constructor (
 
     fun updateDescription(description: String) {
         state.value = state.value.copy(description = description)
+    }
+
+    fun updateCheck(isChecked: Boolean) {
+        state.value = state.value.copy(isChecked = isChecked)
+    }
+
+    fun updateLocation(latitude: Double, longitude: Double) {
+        state.value = state.value.copy(latitude = latitude, longitude = longitude)
     }
 
     fun clearError() {

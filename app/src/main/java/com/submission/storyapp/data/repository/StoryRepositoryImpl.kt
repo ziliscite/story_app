@@ -1,5 +1,6 @@
 package com.submission.storyapp.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.submission.storyapp.data.remote.retrofit.StoryService
@@ -67,7 +68,7 @@ class StoryRepositoryImpl @Inject constructor(
     }
 
     override fun postStories(
-        file: File?, description: String
+        file: File?, description: String, lat: Double?, lon: Double?
     ): LiveData<ResponseWrapper<String>> = liveData {
         emit(ResponseWrapper.Loading)
 
