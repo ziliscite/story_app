@@ -3,8 +3,6 @@ package com.submission.storyapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,8 +13,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
@@ -61,8 +57,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.isAuthenticated.collect { isAuthenticated ->
-                    val navGraph =
-                        navHostFragment.navController.navInflater.inflate(R.navigation.navigation_root)
+                    val navGraph = navController.navInflater.inflate(R.navigation.navigation_root)
 
                     val startDestination = if (isAuthenticated) {
                         R.id.homeFragment

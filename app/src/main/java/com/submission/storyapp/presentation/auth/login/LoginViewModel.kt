@@ -18,7 +18,6 @@ class LoginViewModel @Inject constructor(
     private val sessionUseCases: SessionUseCases,
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
-    // Trying jetpack compose style
     private var state = MutableStateFlow(LoginState())
 
     fun updateEmail(email: String) {
@@ -33,7 +32,6 @@ class LoginViewModel @Inject constructor(
         return authUseCases.signIn(email, password)
     }}
 
-    // Using viewModelScope result in race condition, perhaps due to fragment being destroyed by navigating
     fun onSignedIn(auth: Auth) { CoroutineScope(Dispatchers.IO).launch {
         sessionUseCases.saveSession(auth.token)
     }}

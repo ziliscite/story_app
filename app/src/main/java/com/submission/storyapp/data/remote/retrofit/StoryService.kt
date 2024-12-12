@@ -9,11 +9,18 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface StoryService {
     @GET("stories")
     suspend fun getStories(
         @Header("Authorization") bearerToken: String,
+    ): StoriesResponse
+
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Header("Authorization") bearerToken: String,
+        @Query("location") location : Int = 1,
     ): StoriesResponse
 
     @Multipart

@@ -1,5 +1,6 @@
 package com.submission.storyapp.presentation.core.home
 
+import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.R
 import com.submission.storyapp.databinding.FragmentHomeBinding
 import com.submission.storyapp.domain.models.Story
+import com.submission.storyapp.presentation.core.maps.MapsActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -84,6 +86,11 @@ class HomeFragment : Fragment() {
 
         binding.toolbar.findViewById<ImageButton>(R.id.logoutButton).setOnClickListener {
             alertDialog().show()
+        }
+
+        binding.toolbar.findViewById<ImageButton>(R.id.mapsButton).setOnClickListener {
+            val intent = Intent(requireActivity(), MapsActivity::class.java)
+            startActivity(intent)
         }
     }
 

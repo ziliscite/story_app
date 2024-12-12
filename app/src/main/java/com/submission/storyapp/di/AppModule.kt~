@@ -13,7 +13,6 @@ import com.submission.storyapp.domain.usecases.session.GetSession
 import com.submission.storyapp.domain.usecases.session.SaveSession
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.domain.usecases.story.GetStories
-import com.submission.storyapp.domain.usecases.story.GetStoriesWithLocation
 import com.submission.storyapp.domain.usecases.story.PostStory
 import com.submission.storyapp.domain.usecases.story.StoryUseCases
 import dagger.Module
@@ -99,7 +98,6 @@ object AppModule {
     ): StoryUseCases {
         return StoryUseCases(
             getStories = GetStories(storyRepository),
-            getStoriesWithLocation = GetStoriesWithLocation(storyRepository),
             postStory = PostStory(storyRepository)
         )
     }

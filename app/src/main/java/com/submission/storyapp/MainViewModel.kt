@@ -1,7 +1,5 @@
 package com.submission.storyapp
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.submission.storyapp.domain.usecases.session.SessionUseCases
@@ -25,7 +23,6 @@ class MainViewModel @Inject constructor (
     init {
         sessionUseCases.getSession().onEach { token ->
             isAuthenticated.value = !token.isNullOrEmpty()
-            Log.d("MainActivity", "Authentication status: ${isAuthenticated.value}")
 
             delay(1000)
 

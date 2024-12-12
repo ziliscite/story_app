@@ -15,8 +15,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_theme_secondary"
-            app:titleTextColor="@color/md_theme_onPrimary"
+            android:background="@color/md_theme_inversePrimary"
+            app:titleTextColor="@color/md_theme_onSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -29,11 +29,24 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/baseline_logout_24"
+                android:contentDescription="@string/todo"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_gravity="end"
+                android:layout_marginEnd="12dp"
+                android:padding="8dp"
+                app:tint="@color/md_theme_onSurface" />
+
+            <ImageButton
+                android:id="@+id/mapsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/maps_and_flags_pin_svgrepo_com"
                 android:contentDescription="@string/logout"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_gravity="end"
                 android:layout_marginEnd="12dp"
-                android:padding="8dp" />
+                android:padding="8dp"
+                app:tint="@color/md_theme_onSurface"/>
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
