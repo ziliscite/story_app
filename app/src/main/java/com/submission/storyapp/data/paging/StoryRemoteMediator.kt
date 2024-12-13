@@ -49,6 +49,8 @@ class StoryRemoteMediator(
                 throw Exception(response.message)
             }
 
+            val endList = response.listStory.isEmpty()
+
             storyDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     storyDatabase.remoteKeysDao().deleteRemoteKeys()
@@ -56,7 +58,7 @@ class StoryRemoteMediator(
                 }
 
                 val prevKey = if (page == 1) null else page - 1
-                val nextKey = if (response.listStory.isEmpty()) null else page + 1
+                val nextKey = if (endList) null else page + 1
                 val keys = response.listStory.map {
                     RemoteKeys(id = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
@@ -65,7 +67,7 @@ class StoryRemoteMediator(
                 storyDatabase.storyDao().insertStory(response.listStory)
             }
 
-            MediatorResult.Success(endOfPaginationReached = response.listStory.isEmpty())
+            MediatorResult.Success(endOfPaginationReached = endList)
         } catch (exception: UnauthorizedException) {
             MediatorResult.Error(exception)
         } catch (exception: Exception) {

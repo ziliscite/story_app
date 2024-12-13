@@ -29,7 +29,7 @@ class StoryRepositoryImpl @Inject constructor(
     private val storyService: StoryService,
     private val sessionUseCases: SessionUseCases
 ): StoryRepository {
-    override fun getStories(): Flow<PagingData<Story>> {
+    override fun getStories(): LiveData<PagingData<Story>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
@@ -39,7 +39,7 @@ class StoryRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 storyDatabase.storyDao().getAllStory()
             }
-        ).flow
+        ).liveData
     }
 
     override fun getStoriesWithLocation(): LiveData<ResponseWrapper<List<Story>>> = liveData {

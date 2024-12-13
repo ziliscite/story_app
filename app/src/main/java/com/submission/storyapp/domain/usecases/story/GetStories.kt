@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 class GetStories(
     private val storyRepository: StoryRepository
 ) {
-    operator fun invoke(): Flow<PagingData<Story>> {
+    operator fun invoke(): LiveData<PagingData<Story>> {
         return storyRepository.getStories()
     }
 }

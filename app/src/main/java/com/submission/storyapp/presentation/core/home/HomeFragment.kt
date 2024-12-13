@@ -59,10 +59,12 @@ class HomeFragment : Fragment() {
         handleRefresh()
         inflateActionBar()
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stories.collect { stories ->
-                    adapter.submitData(stories)
+        viewModel.stories.observe(viewLifecycleOwner) { stories ->
+            adapter.submitData(lifecycle, stories)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (adapter.snapshot().items.isEmpty()) {
+                    showToast("No stories found")
                 }
             }
         }
