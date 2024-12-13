@@ -24,7 +24,9 @@ import com.submission.storyapp.databinding.FragmentHomeBinding
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.presentation.core.maps.MapsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -108,6 +110,7 @@ class HomeFragment : Fragment() {
     private fun handleButton() { binding.fabCreate.setOnClickListener {
         val action = HomeFragmentDirections.actionHomeFragmentToCreateFragment()
         findNavController().navigate(action)
+        viewModel.setScrollToTop(true)
     }}
 
     private fun recyclerView() { binding.apply {
@@ -129,8 +132,8 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.distinctUntilChangedBy { it.refresh }.collect { state ->
-                    when (val refreshState = state.refresh) {
+                adapter.loadStateFlow.distinctUntilChangedBy { it.refresh }.collect { loadState ->
+                    when (val refreshState = loadState.refresh) {
                         is LoadState.Loading -> {
                             lpiLoading.visibility = View.VISIBLE
                         }
@@ -147,11 +150,19 @@ class HomeFragment : Fragment() {
                         is LoadState.NotLoading -> {
                             lpiLoading.visibility = View.GONE
                             srfLayout.isRefreshing = false
+
+                            if (viewModel.scroll.value) {
+                                delay(100)
+                                binding.rvStory.post {
+                                    binding.rvStory.scrollToPosition(0)
+                                    (binding.rvStory.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(0, 0)
+                                }
+                                viewModel.setScrollToTop(false)
+                            }
                         }
                     }
 
-                    // Append (bottom) state handling
-                    when (val appendState = state.append) {
+                    when (val appendState = loadState.append) {
                         is LoadState.Loading -> {
                             pbLoading.visibility = View.VISIBLE
                         }
@@ -178,11 +189,6 @@ class HomeFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.rvStory.scrollToPosition(0)
     }
 
     override fun onDestroyView() {
