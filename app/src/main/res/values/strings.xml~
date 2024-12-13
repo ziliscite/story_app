@@ -15,8 +15,6 @@
     <string name="password">Password</string>
     <string name="agree_label">Add current location?</string>
 
-    <string name="retry">Retry</string>
-
     <string name="title_login_page">Welcome Back!</string>
     <string name="message_login_page">Lets log back in to your account</string>
     <string name="message_login_page_sign_up">Don\'t have an account? Sign Up</string>

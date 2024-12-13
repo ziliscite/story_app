@@ -1,7 +1,7 @@
 package com.submission.storyapp.data.remote.retrofit
 
-import com.submission.storyapp.data.remote.responses.SignInResponse
-import com.submission.storyapp.data.remote.responses.SignUpResponse
+import com.submission.storyapp.data.remote.dto.SignInResponse
+import com.submission.storyapp.data.remote.dto.SignUpResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

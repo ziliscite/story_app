@@ -36,7 +36,7 @@ internal class StackRemoteViewsFactory (
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() { coroutineScope.launch {
-        storyUseCases.getStories().asFlow().collect{
+        storyUseCases.getStoriesWithLocation().asFlow().collect{
             when (it) {
                 is ResponseWrapper.Success -> {
                     Log.e("StackRemoteViewsFactory", "Success loading stories: ${it.data.size}")

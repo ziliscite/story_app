@@ -1,7 +1,7 @@
 package com.submission.storyapp.data.remote.retrofit
 
-import com.submission.storyapp.data.remote.responses.PostStoryResponse
-import com.submission.storyapp.data.remote.responses.StoriesResponse
+import com.submission.storyapp.data.remote.dto.PostStoryResponse
+import com.submission.storyapp.data.remote.dto.StoriesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -15,6 +15,8 @@ interface StoryService {
     @GET("stories")
     suspend fun getStories(
         @Header("Authorization") bearerToken: String,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int? = null,
     ): StoriesResponse
 
     @GET("stories")

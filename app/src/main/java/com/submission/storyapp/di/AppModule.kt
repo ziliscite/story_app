@@ -1,5 +1,7 @@
 package com.submission.storyapp.di
 
+import android.app.Application
+import com.submission.storyapp.data.local.room.StoryDatabase
 import com.submission.storyapp.data.remote.retrofit.AuthService
 import com.submission.storyapp.data.remote.retrofit.StoryService
 import com.submission.storyapp.domain.repository.AuthRepository
@@ -102,5 +104,13 @@ object AppModule {
             getStoriesWithLocation = GetStoriesWithLocation(storyRepository),
             postStory = PostStory(storyRepository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideStoryDatabase(
+        context: Application
+    ): StoryDatabase {
+        return StoryDatabase.getDatabase(context)
     }
 }

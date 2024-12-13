@@ -16,7 +16,6 @@ import com.submission.storyapp.domain.usecases.session.SessionUseCases
 import com.submission.storyapp.utils.ResponseWrapper
 import com.submission.storyapp.utils.UnauthorizedException
 import com.submission.storyapp.utils.withToken
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -29,7 +28,7 @@ class StoryRepositoryImpl @Inject constructor(
     private val storyService: StoryService,
     private val sessionUseCases: SessionUseCases
 ): StoryRepository {
-    override fun getStories(): Flow<PagingData<Story>> {
+    override fun getStories(): LiveData<PagingData<Story>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
@@ -39,7 +38,7 @@ class StoryRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 storyDatabase.storyDao().getAllStory()
             }
-        ).flow
+        ).liveData
     }
 
     override fun getStoriesWithLocation(): LiveData<ResponseWrapper<List<Story>>> = liveData {

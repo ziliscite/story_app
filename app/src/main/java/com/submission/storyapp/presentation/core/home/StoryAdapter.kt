@@ -3,8 +3,8 @@ package com.submission.storyapp.presentation.core.home
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.submission.storyapp.domain.models.Story
@@ -13,7 +13,7 @@ import com.submission.storyapp.utils.parseDate
 
 class StoryAdapter(
     val onClick: (Story, StoryCardBinding) -> Unit
-) : ListAdapter<Story, StoryAdapter.MyViewHolder>(DIFF_CALLBACK) {
+): PagingDataAdapter<Story, StoryAdapter.MyViewHolder>(DIFF_CALLBACK) {
     class MyViewHolder(
         val binding: StoryCardBinding,
         private val context: Context
@@ -34,9 +34,11 @@ class StoryAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story)
-        holder.itemView.setOnClickListener{
-            onClick(story, holder.binding)
+        story?.let {
+            holder.bind(story)
+            holder.itemView.setOnClickListener{
+                onClick(story, holder.binding)
+            }
         }
     }
 

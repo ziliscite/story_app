@@ -12,14 +12,22 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.R
 import com.submission.storyapp.databinding.FragmentHomeBinding
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.presentation.core.maps.MapsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -27,6 +35,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: StoryAdapter
+    private lateinit var loadingAdapter: LoadingAdapter
 
     private val viewModel: HomeViewModel by viewModels()
 
@@ -48,36 +57,12 @@ class HomeFragment : Fragment() {
         handleRefresh()
         inflateActionBar()
 
-        // Observe state / side effect
-        viewModel.state.asLiveData().observe(viewLifecycleOwner) { state ->
-            handleState(state)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refresh()
-    }
-
-    private fun handleState(state: HomeState) {
-        binding.lpiLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
-
-        binding.srfLayout.isRefreshing = state.refresh
-
-        if (state.error != null) {
-            showToast(state.error)
-        }
-
-        handleStories(state.stories)
-
-        if (state.scroll) {
-            binding.rvStory.layoutManager?.scrollToPosition(0)
-        }
-    }
-
-    private fun handleStories(stories: List<Story>) {
-        if (stories.isNotEmpty()) {
-            adapter.submitList(stories)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stories.collect { stories ->
+                    adapter.submitData(stories)
+                }
+            }
         }
     }
 
@@ -117,7 +102,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun handleRefresh() { binding.srfLayout.setOnRefreshListener {
-        viewModel.retry()
+        adapter.refresh()
     }}
 
     private fun handleButton() { binding.fabCreate.setOnClickListener {
@@ -134,16 +119,74 @@ class HomeFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        rvStory.adapter = adapter
+        loadingAdapter = LoadingAdapter{
+            adapter.retry()
+        }
+
+        rvStory.adapter = adapter.withLoadStateFooter(
+            footer = loadingAdapter
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.distinctUntilChangedBy { it.refresh }.collect { state ->
+                    when (val refreshState = state.refresh) {
+                        is LoadState.Loading -> {
+                            lpiLoading.visibility = View.VISIBLE
+                        }
+                        is LoadState.Error -> {
+                            lpiLoading.visibility = View.GONE
+                            srfLayout.isRefreshing = false
+                            val errorTextView = when(val error = refreshState.error) {
+                                is IOException -> "Network Error: Check your connection"
+                                is HttpException -> "Server Error: ${error.code()}"
+                                else -> "Unknown Error: ${error.message}"
+                            }
+                            showToast(errorTextView)
+                        }
+                        is LoadState.NotLoading -> {
+                            lpiLoading.visibility = View.GONE
+                            srfLayout.isRefreshing = false
+                        }
+                    }
+
+                    // Append (bottom) state handling
+                    when (val appendState = state.append) {
+                        is LoadState.Loading -> {
+                            pbLoading.visibility = View.VISIBLE
+                        }
+                        is LoadState.Error -> {
+                            pbLoading.visibility = View.GONE
+                            val errorMessage = when(val error = appendState.error) {
+                                is IOException -> "Network Error: Check your connection"
+                                is HttpException -> "Server Error: ${error.code()}"
+                                else -> "Unknown Error: ${error.message}"
+                            }
+                            showToast(errorMessage)
+                        }
+                        is LoadState.NotLoading -> {
+                            pbLoading.visibility = View.GONE
+                            if (appendState.endOfPaginationReached) {
+                                showToast("No more stories to load")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }}
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.rvStory.scrollToPosition(0)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.removeObserver()
         _binding = null
     }
 }

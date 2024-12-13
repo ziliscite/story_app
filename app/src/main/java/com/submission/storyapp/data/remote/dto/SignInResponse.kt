@@ -1,4 +1,4 @@
-package com.submission.storyapp.data.remote.responses
+package com.submission.storyapp.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import com.submission.storyapp.domain.models.Auth
