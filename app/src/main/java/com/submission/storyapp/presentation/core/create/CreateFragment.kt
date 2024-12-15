@@ -117,6 +117,7 @@ class CreateFragment : Fragment() {
 
         cbAgree.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) getLocation()
+            else viewModel.updateCheck(false)
         }
     }}
 
@@ -154,17 +155,29 @@ class CreateFragment : Fragment() {
     }
 
     private fun getLocation() {
-        if(checkPermission(FINE_LOCATION) || checkPermission(COARSE_LOCATION)) {
-            locationClient.lastLocation.addOnSuccessListener {
-                it?.let { location ->
-                    viewModel.updateLocation(location.latitude, location.longitude)
-                } ?: run {
-                    showToast("Location is not found.")
+        if (!checkPermission(FINE_LOCATION) && !checkPermission(COARSE_LOCATION)) {
+            requestLocationPermissionLauncher.launch(arrayOf(FINE_LOCATION, COARSE_LOCATION))
+            return
+        }
+
+        try {
+            locationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    location?.let {
+                        viewModel.updateLocation(it.latitude, it.longitude)
+                        viewModel.updateCheck(true)
+                    } ?: run {
+                        showToast("Location not found")
+                        viewModel.updateCheck(false)
+                    }
+                }
+                .addOnFailureListener {
+                    showToast("Location retrieval failed")
                     viewModel.updateCheck(false)
                 }
-            }
-        } else {
-            requestLocationPermissionLauncher.launch(arrayOf(FINE_LOCATION, COARSE_LOCATION))
+        } catch (e: Exception) {
+            showToast("Permission error")
+            viewModel.updateCheck(false)
         }
     }
 

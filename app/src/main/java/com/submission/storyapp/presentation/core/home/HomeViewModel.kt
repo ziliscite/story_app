@@ -17,17 +17,16 @@ class HomeViewModel @Inject constructor(
     private val storyUseCases: StoryUseCases,
     private val sessionUseCases: SessionUseCases
 ) : ViewModel() {
+    val stories = storyUseCases.getStories().cachedIn(viewModelScope)
+
+    fun logout() { CoroutineScope(Dispatchers.IO).launch {
+        sessionUseCases.clearSession()
+    }}
+
     var scroll = MutableStateFlow(false)
         private set
 
     fun setScrollToTop(shouldScroll: Boolean) {
         scroll.value = shouldScroll
     }
-
-    val stories = storyUseCases.getStories().cachedIn(viewModelScope)
-
-    // Use CoroutineScope to make sure it doesn't get interrupted
-    fun logout() { CoroutineScope(Dispatchers.IO).launch {
-        sessionUseCases.clearSession()
-    }}
 }

@@ -85,4 +85,14 @@ dependencies {
     // Dependency Injection
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
+
+    // Testing
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent.jvm)
 }
