@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapsViewModel @Inject constructor(
-    private val storyUseCases: StoryUseCases
+    storyUseCases: StoryUseCases
 ): ViewModel() {
     val stories = storyUseCases.getStoriesWithLocation()
 }

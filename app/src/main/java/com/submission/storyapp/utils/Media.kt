@@ -1,3 +1,5 @@
+@file:Suppress("RedundantNullableReturnType")
+
 package com.submission.storyapp.utils
 
 import android.content.ContentValues

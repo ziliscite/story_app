@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">storyapp</string>
     <string name="signup">Register</string>
     <string name="login">Sign In</string>

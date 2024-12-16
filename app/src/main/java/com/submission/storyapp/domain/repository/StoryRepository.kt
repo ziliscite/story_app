@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.utils.ResponseWrapper
-import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface StoryRepository {

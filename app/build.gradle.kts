@@ -13,13 +13,15 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        testInstrumentationRunner = "com.submission.storyapp.HiltTestRunner"
+
         applicationId = "com.submission.storyapp"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -41,6 +43,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    testOptions {
+        animationsDisabled = true
+    }
+
+    packaging { resources { excludes += "/META-INF/*" } }
 }
 
 dependencies {
@@ -57,9 +64,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     // Splash
     implementation(libs.androidx.core.splashscreen)
@@ -87,6 +91,9 @@ dependencies {
     implementation(libs.hilt.android)
 
     // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
@@ -95,4 +102,23 @@ dependencies {
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.agent.jvm)
+    debugImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.okhttp3.okhttp.tls)
+    implementation(libs.androidx.espresso.idling.resource)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.androidx.hilt.compiler)
+    kspTest(libs.androidx.hilt.compiler)
+    debugImplementation(libs.monitor)
+    testImplementation(libs.monitor)
+    debugImplementation(libs.androidx.core)
+    debugImplementation(libs.androidx.runner)
+    debugImplementation(libs.core.ktx)
+    androidTestImplementation(libs.androidx.junit.ktx)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.truth)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.espresso.intents)
 }

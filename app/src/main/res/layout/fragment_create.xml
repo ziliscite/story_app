@@ -44,15 +44,16 @@
             android:id="@+id/ivStory"
             android:layout_width="0dp"
             android:layout_height="400dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/outline_image_24"
             android:alpha="0"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/todo"
+            android:scaleType="centerCrop"
+            android:src="@drawable/outline_image_24"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:src="@drawable/sticker_6"
-            tools:alpha="100" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:alpha="100"
+            tools:src="@drawable/sticker_6" />
 
         <Button
             android:id="@+id/btnCamera"

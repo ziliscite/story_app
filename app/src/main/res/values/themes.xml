@@ -82,4 +82,6 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Base.Theme.Storyapp</item>
     </style>
+
+    <style name="EmptyTheme" parent="Theme.AppCompat.NoActionBar"></style>
 </resources>

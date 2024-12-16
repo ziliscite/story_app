@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -21,12 +20,10 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.submission.storyapp.R
 import com.submission.storyapp.databinding.FragmentHomeBinding
-import com.submission.storyapp.domain.models.Story
 import com.submission.storyapp.presentation.core.maps.MapsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -61,12 +58,6 @@ class HomeFragment : Fragment() {
 
         viewModel.stories.observe(viewLifecycleOwner) { stories ->
             adapter.submitData(lifecycle, stories)
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                if (adapter.snapshot().items.isEmpty()) {
-                    showToast("No stories found")
-                }
-            }
         }
     }
 
@@ -160,27 +151,6 @@ class HomeFragment : Fragment() {
                                     (binding.rvStory.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(0, 0)
                                 }
                                 viewModel.setScrollToTop(false)
-                            }
-                        }
-                    }
-
-                    when (val appendState = loadState.append) {
-                        is LoadState.Loading -> {
-                            pbLoading.visibility = View.VISIBLE
-                        }
-                        is LoadState.Error -> {
-                            pbLoading.visibility = View.GONE
-                            val errorMessage = when(val error = appendState.error) {
-                                is IOException -> "Network Error: Check your connection"
-                                is HttpException -> "Server Error: ${error.code()}"
-                                else -> "Unknown Error: ${error.message}"
-                            }
-                            showToast(errorMessage)
-                        }
-                        is LoadState.NotLoading -> {
-                            pbLoading.visibility = View.GONE
-                            if (appendState.endOfPaginationReached) {
-                                showToast("No more stories to load")
                             }
                         }
                     }

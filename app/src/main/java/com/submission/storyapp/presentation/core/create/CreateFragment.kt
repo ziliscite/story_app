@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -211,6 +211,11 @@ class CreateFragment : Fragment() {
         }
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun setImageForTesting(uri: Uri) {
+        viewModel.updateUri(uri)
+    }
+
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
@@ -258,6 +263,5 @@ class CreateFragment : Fragment() {
     companion object {
         private const val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
         private const val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
-        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
     }
 }

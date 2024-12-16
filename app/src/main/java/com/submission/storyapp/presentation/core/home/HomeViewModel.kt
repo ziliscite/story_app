@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val storyUseCases: StoryUseCases,
+    storyUseCases: StoryUseCases,
     private val sessionUseCases: SessionUseCases
 ) : ViewModel() {
     val stories = storyUseCases.getStories().cachedIn(viewModelScope)

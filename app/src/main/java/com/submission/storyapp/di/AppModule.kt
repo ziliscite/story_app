@@ -33,6 +33,10 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
+    fun provideBaseUrl() = "https://story-api.dicoding.dev/v1/"
+
+    @Provides
+    @Singleton
     fun provideSessionUseCases(
         localUserRepository: LocalUserRepository
     ): SessionUseCases {
@@ -58,10 +62,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        client: OkHttpClient
+        client: OkHttpClient,
+        baseUrl: String
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://story-api.dicoding.dev/v1/")
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
